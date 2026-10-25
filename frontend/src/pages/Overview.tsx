@@ -43,8 +43,8 @@ export const Overview: React.FC<OverviewProps> = ({
 
       {/* Main 2-Column Row (Matches CrimeRakshak reference screenshot layout) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left Column (8 cols): Draggable Image Comparison Slider */}
-        <div className="lg:col-span-8 flex flex-col">
+        {/* Left Column (7 cols): Draggable Image Comparison Slider */}
+        <div className="lg:col-span-7 flex flex-col">
           {analysis ? (
             <ComparisonSlider
               beforeUrl={analysis.visuals.beforeUrl}
@@ -70,11 +70,13 @@ export const Overview: React.FC<OverviewProps> = ({
           )}
         </div>
 
-        {/* Right Column (4 cols): Change Breakdown Donut & Region Table */}
-        <div className="lg:col-span-4 flex flex-col">
+        {/* Right Column (5 cols): Change Breakdown Donut & Region Table */}
+        <div className="lg:col-span-5 flex flex-col">
           <ChangeBreakdownCard
             measurements={analysis?.measurements}
             regions={analysis?.regions}
+            differenceHeatmapUrl={analysis?.visuals?.differenceHeatmapUrl}
+            method={method}
             loading={loadingAnalysis}
           />
         </div>

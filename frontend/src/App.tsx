@@ -7,6 +7,7 @@ import { ReportsView } from './pages/ReportsView';
 import { TimeTravelView } from './pages/TimeTravelView';
 import { UploadModal } from './components/UploadModal';
 import { ReportModal } from './components/ReportModal';
+import { AdaptionChatWidget } from './components/AdaptionChatWidget';
 import {
   fetchHealth,
   fetchSamples,
@@ -43,6 +44,32 @@ export function App() {
   const [uploadModalOpen, setUploadModalOpen] = useState<boolean>(false);
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+
+  // App-wide Dark/Light Theme state with localStorage persistence
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('spectra_theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('spectra_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
     setToastMsg({ text, type });
@@ -82,8 +109,22 @@ export function App() {
       const threshold = threshOverride !== undefined ? threshOverride : currentThreshold;
 
       try {
-        const source = pairId ? { pairId } : { sampleId: sampleId || activeSampleId };
+        let source;
+        const activeStacId = analysis?.provenance?.sourceSceneIds?.[0];
+        if (pairId) {
+          source = { pairId };
+        } else if (customPairId) {
+          source = { pairId: customPairId };
+        } else if (activeStacId && (activeStacId.startsWith('stac_') || activeStacId.startsWith('pair_'))) {
+          source = { pairId: activeStacId };
+        } else {
+          source = { sampleId: sampleId || activeSampleId };
+        }
+
         const res = await runAnalysis(source, method, threshold);
+        if (analysis?.sourceTitle && source.pairId && source.pairId.startsWith('stac_')) {
+          res.sourceTitle = analysis.sourceTitle;
+        }
         setAnalysis(res);
         setCurrentMethod(res.method);
         setCurrentThreshold(res.measurements.thresholdUsed);
@@ -98,7 +139,7 @@ export function App() {
         setLoadingAnalysis(false);
       }
     },
-    [activeSampleId, currentMethod, currentThreshold]
+    [activeSampleId, customPairId, currentMethod, currentThreshold, analysis]
   );
 
   // Trigger initial analysis when ready
@@ -190,20 +231,22 @@ export function App() {
   const pageMeta = getPageTitleAndSubtitle();
 
   return (
-    <div className="flex h-screen overflow-hidden text-[#102543] bg-[#f0f5fc]">
+    <div className="flex h-screen overflow-hidden text-[#102543] dark:text-slate-100 bg-[#f0f5fc] dark:bg-[#060913] transition-colors duration-300 print:block print:h-auto print:overflow-visible print:bg-white">
       {/* Sidebar - Matches CrimeRakshak reference */}
-      <Sidebar
-        currentPath={activeTab}
-        onNavigate={(tab) => setActiveTab(tab)}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-        onResetCase={() => handleSelectSample(activeSampleId)}
-        onOpenUpload={() => setUploadModalOpen(true)}
-      />
+      <div className="print:hidden h-full flex shrink-0">
+        <Sidebar
+          currentPath={activeTab}
+          onNavigate={(tab) => setActiveTab(tab)}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          onResetCase={() => handleSelectSample(activeSampleId)}
+          onOpenUpload={() => setUploadModalOpen(true)}
+        />
+      </div>
 
       {/* Main Content Area with Mesh Gradient & Rounded Top Left */}
-      <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
-        <div className="flex-1 flex flex-col min-h-0 main-mesh rounded-tl-3xl overflow-hidden relative shadow-2xl border-l border-t border-white/60">
+      <div className="flex-1 flex flex-col min-w-0 transition-all duration-300 print:hidden">
+        <div className="flex-1 flex flex-col min-h-0 main-mesh rounded-tl-3xl overflow-hidden relative shadow-2xl border-l border-t border-white/60 dark:border-white/10">
           <main className="flex-1 overflow-y-auto p-5 sm:p-7 scrollbar-hide relative z-10">
             {/* Header */}
             <Header
@@ -212,6 +255,8 @@ export function App() {
               onOpenUpload={() => setUploadModalOpen(true)}
               adaptionOnline={adaptionOnline}
               isCustomUpload={!!customPairId}
+              theme={theme}
+              onToggleTheme={toggleTheme}
             />
 
             {/* Page Router - Streamlined to Essential Views + Global Time-Travel */}
@@ -225,13 +270,13 @@ export function App() {
                 method={currentMethod}
                 onMethodChange={(m) => {
                   setCurrentMethod(m);
-                  executeAnalysis(activeSampleId, customPairId || undefined, m);
+                  executeAnalysis(customPairId ? undefined : activeSampleId, customPairId || undefined, m);
                 }}
                 threshold={currentThreshold}
                 onThresholdChange={(t) => setCurrentThreshold(t)}
                 onRecompute={() =>
                   executeAnalysis(
-                    activeSampleId,
+                    customPairId ? undefined : activeSampleId,
                     customPairId || undefined,
                     currentMethod,
                     currentThreshold
@@ -247,6 +292,16 @@ export function App() {
                   setAnalysis(res);
                   setInsight(null);
                   setReportData(null);
+                  const stacPairId = res.provenance?.sourceSceneIds?.[0];
+                  if (stacPairId && (stacPairId.startsWith('stac_') || stacPairId.startsWith('pair_'))) {
+                    setCustomPairId(stacPairId);
+                  }
+                  if (res.method) {
+                    setCurrentMethod(res.method);
+                  }
+                  if (res.measurements?.thresholdUsed !== undefined) {
+                    setCurrentThreshold(res.measurements.thresholdUsed);
+                  }
                   setActiveTab('overview');
                   showToast('Historical Earth observation loaded into studio!', 'success');
                 }}
@@ -280,10 +335,15 @@ export function App() {
         report={reportData}
       />
 
+      {/* Floating Glassmorphic Adaption AI Copilot */}
+      <div className="print:hidden">
+        <AdaptionChatWidget analysis={analysis} />
+      </div>
+
       {/* Toast Notification */}
       {toastMsg && (
         <div
-          className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-xl text-xs font-bold border transition-all animate-in slide-in-from-bottom-5 ${
+          className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-xl text-xs font-bold border transition-all animate-in slide-in-from-bottom-5 print:hidden ${
             toastMsg.type === 'error'
               ? 'bg-rose-50 text-rose-800 border-rose-200'
               : 'bg-emerald-50 text-emerald-800 border-emerald-200'

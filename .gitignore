@@ -16,6 +16,8 @@ build/
 # Cache & Temporary
 .cache/
 *.log
+backend/*.png
+backend/*.jpg
 
 # Node
 node_modules/

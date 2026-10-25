@@ -4,10 +4,15 @@ import type {
   AnalysisResult,
   IncidentInsight,
   ReportData,
+  RegulatoryNotice,
+  ParcelDiagnostic,
+  TimeTravelNarrative,
+  ChatMessage,
+  ChatResponse,
 } from '../types/spectra';
 
 const RAW_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
-const API_BASE = RAW_BASE ? `${RAW_BASE}/api/v1` : '/api/v1';
+export const API_BASE = RAW_BASE ? `${RAW_BASE}/api/v1` : '/api/v1';
 
 export function resolveAssetUrl(url: string | null | undefined): string {
   if (!url) return '';
@@ -166,3 +171,79 @@ export async function runTimeTravelAnalysis(params: {
   return result;
 }
 
+export async function fetchRegulatoryNotice(
+  analysisId: string,
+  jurisdiction?: string
+): Promise<RegulatoryNotice> {
+  const url = jurisdiction
+    ? `${API_BASE}/analyses/${analysisId}/regulatory-notice?jurisdiction=${encodeURIComponent(jurisdiction)}`
+    : `${API_BASE}/analyses/${analysisId}/regulatory-notice`;
+  const res = await fetch(url, { method: 'POST' });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData?.detail?.error?.message || 'Failed to generate regulatory notice');
+  }
+  return res.json();
+}
+
+export async function fetchParcelDiagnostic(
+  analysisId: string,
+  parcelId: number
+): Promise<ParcelDiagnostic> {
+  const res = await fetch(`${API_BASE}/analyses/${analysisId}/parcels/${parcelId}/diagnostics`, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData?.detail?.error?.message || 'Failed to generate parcel diagnostics');
+  }
+  return res.json();
+}
+
+export async function fetchTimeTravelNarrative(
+  analysisId: string,
+  baselineYear: number,
+  comparisonYear: number,
+  minLon?: number,
+  minLat?: number
+): Promise<TimeTravelNarrative> {
+  const params = new URLSearchParams({
+    baselineYear: baselineYear.toString(),
+    comparisonYear: comparisonYear.toString(),
+  });
+  if (minLon !== undefined && minLat !== undefined) {
+    params.set('minLon', minLon.toString());
+    params.set('minLat', minLat.toString());
+  }
+  const res = await fetch(`${API_BASE}/analyses/${analysisId}/timetravel-narrative?${params.toString()}`, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData?.detail?.error?.message || 'Failed to generate time travel narrative');
+  }
+  return res.json();
+}
+
+export async function sendChatMessage(params: {
+  message: string;
+  history?: { role: string; content: string }[];
+  analysisId?: string;
+  uiContext?: Record<string, any>;
+}): Promise<ChatResponse> {
+  const res = await fetch(`${API_BASE}/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: params.message,
+      history: params.history,
+      analysisId: params.analysisId,
+      uiContext: params.uiContext,
+    }),
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData?.detail?.error?.message || 'Failed to communicate with Adaption AI');
+  }
+  return res.json();
+}

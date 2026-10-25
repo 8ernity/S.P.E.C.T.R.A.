@@ -55,7 +55,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   return (
     <aside
-      className={`sidebar-mesh h-screen flex flex-col justify-between transition-all duration-300 border-r border-blue-200/50 select-none z-30 shrink-0 ${
+      className={`sidebar-mesh h-screen flex flex-col justify-between transition-all duration-300 border-r border-blue-200/50 dark:border-white/10 select-none z-30 shrink-0 ${
         collapsed ? 'w-[76px]' : 'w-[260px]'
       }`}
     >
@@ -66,15 +66,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="flex items-center gap-3 cursor-pointer overflow-hidden"
             onClick={() => onNavigate('overview')}
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
-              <Satellite className="w-5 h-5 animate-pulse" />
+            <div className="w-10 h-10 flex items-center justify-center shrink-0">
+              <img
+                src="/spectra-logo.png"
+                alt="SPECTRA Logo"
+                className="w-10 h-10 object-contain drop-shadow-md hover:scale-105 transition-transform"
+              />
             </div>
             {!collapsed && (
               <div className="flex flex-col min-w-0">
-                <span className="font-extrabold text-xl tracking-tight text-[#102543] font-['Outfit']">
+                <span className="font-extrabold text-xl tracking-tight text-[#102543] dark:text-white font-['Outfit'] transition-colors">
                   SPECTRA
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700/80 -mt-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700/80 dark:text-indigo-300/80 -mt-1">
                   Earth Intelligence
                 </span>
               </div>
@@ -82,7 +86,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           <button
             onClick={onToggleCollapse}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-white/60 transition-colors"
+            className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-300 hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
             title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           >
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -94,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex-1 overflow-y-auto px-3 py-3 scrollbar-hide space-y-4">
         <div className="space-y-1">
           {!collapsed && (
-            <div className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+            <div className="px-3 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
               PS-05 Change Intelligence
             </div>
           )}
@@ -106,15 +110,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
                 title={collapsed ? item.label : undefined}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-200 text-left ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-200 text-left cursor-pointer ${
                   isActive
-                    ? 'bg-white text-indigo-700 shadow-sm shadow-indigo-900/10 font-bold border border-blue-100'
-                    : 'text-[#1e3452] hover:bg-white/60 hover:text-indigo-600'
+                    ? 'bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 shadow-sm shadow-indigo-900/10 font-bold border border-blue-100 dark:border-white/10'
+                    : 'text-[#1e3452] dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-800/60 hover:text-indigo-600 dark:hover:text-indigo-300'
                 }`}
               >
                 <Icon
                   className={`w-4.5 h-4.5 shrink-0 transition-transform duration-200 ${
-                    isActive ? 'text-indigo-600 scale-110' : 'text-slate-500'
+                    isActive ? 'text-indigo-600 dark:text-indigo-400 scale-110' : 'text-slate-500 dark:text-slate-400'
                   }`}
                 />
                 {!collapsed && <span className="truncate">{item.label}</span>}
@@ -126,12 +130,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Quick Upload Action */}
         <div className="pt-2">
           {!collapsed ? (
-            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-cyan-500/10 to-blue-500/5 border border-indigo-200/60 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-bold text-indigo-900 mb-1">
-                <UploadCloud className="w-4 h-4 text-indigo-600" />
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-cyan-500/10 to-blue-500/5 dark:from-indigo-950/40 dark:via-cyan-950/30 dark:to-blue-950/20 border border-indigo-200/60 dark:border-indigo-500/30 shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-bold text-indigo-900 dark:text-indigo-200 mb-1">
+                <UploadCloud className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                 <span>Upload Custom Pair</span>
               </div>
-              <p className="text-[11px] text-slate-600 leading-snug mb-2.5">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug mb-2.5">
                 Ingest optical/multispectral before & after scenes for instant anomaly analysis.
               </p>
               <button
@@ -146,7 +150,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               onClick={onOpenUpload}
               title="Upload Custom Pair"
-              className="w-full flex items-center justify-center p-2.5 rounded-2xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors border border-indigo-200"
+              className="w-full flex items-center justify-center p-2.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors border border-indigo-200 dark:border-indigo-600/40 cursor-pointer"
             >
               <UploadCloud className="w-5 h-5" />
             </button>
@@ -155,7 +159,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Station Profile at Bottom */}
-      <div className="p-3 border-t border-blue-200/40 bg-white/30 backdrop-blur-sm">
+      <div className="p-3 border-t border-blue-200/40 dark:border-white/10 bg-white/30 dark:bg-slate-900/40 backdrop-blur-sm">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-9 h-9 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
@@ -163,8 +167,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             {!collapsed && (
               <div className="min-w-0">
-                <div className="text-xs font-bold text-[#102543] truncate">SPECTRA Station</div>
-                <div className="text-[10px] text-slate-500 truncate font-medium">Earth Observation</div>
+                <div className="text-xs font-bold text-[#102543] dark:text-white truncate">SPECTRA Station</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate font-medium">Earth Observation</div>
               </div>
             )}
           </div>
@@ -173,7 +177,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {onResetCase && (
                 <button
                   onClick={onResetCase}
-                  className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-md hover:bg-white/60 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-300 rounded-md hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
                   title="Reload Active Sample"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />

@@ -3,6 +3,8 @@
 @import "leaflet/dist/leaflet.css";
 @import "leaflet-draw/dist/leaflet.draw.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --canvas-a: #dcecff;
@@ -15,8 +17,8 @@
     --sidebar-active-bg: #ffffff;
     --sidebar-active-text: #4f46e5;
     
-    --surface: rgba(255, 255, 255, 0.76);
-    --surface-strong: rgba(255, 255, 255, 0.90);
+    --surface: rgba(255, 255, 255, 0.78);
+    --surface-strong: rgba(255, 255, 255, 0.92);
     --stroke: rgba(255, 255, 255, 0.92);
     --stroke-subtle: rgba(59, 130, 246, 0.12);
     
@@ -38,7 +40,37 @@
     --shadow-card: 0 14px 38px rgba(59, 99, 143, 0.08), 0 2px 8px rgba(59, 99, 143, 0.04);
     --shadow-card-hover: 0 18px 48px rgba(59, 99, 143, 0.14), 0 4px 12px rgba(59, 99, 143, 0.06);
   }
+
+  .dark {
+    --canvas-a: #060913;
+    --canvas-b: #0c1222;
+    --canvas-c: #061e24;
+    
+    --sidebar: #0b1120;
+    --sidebar-text: #f1f5f9;
+    --sidebar-muted: #94a3b8;
+    --sidebar-active-bg: #1e293b;
+    --sidebar-active-text: #818cf8;
+    
+    --surface: rgba(15, 23, 42, 0.78);
+    --surface-strong: rgba(15, 23, 42, 0.94);
+    --stroke: rgba(255, 255, 255, 0.09);
+    --stroke-subtle: rgba(99, 102, 241, 0.22);
+    
+    --ink: #f1f5f9;
+    --muted: #94a3b8;
+    --faint: #64748b;
+    
+    --primary: #6366f1;
+    --primary-soft: rgba(99, 102, 241, 0.16);
+    --primary-hover: #818cf8;
+    
+    --shadow-card: 0 14px 38px rgba(0, 0, 0, 0.50), 0 2px 8px rgba(0, 0, 0, 0.30);
+    --shadow-card-hover: 0 18px 48px rgba(0, 0, 0, 0.65), 0 4px 12px rgba(0, 0, 0, 0.40);
+  }
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 body {
   margin: 0;
@@ -48,22 +80,159 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background-color: #060913;
+  color: #f1f5f9;
+}
+
+/* ==========================================================================
+   Global Dark Theme Text & Control Inversions
+   Eliminates all dark/black text in dark mode for maximum contrast and legibility
+   ========================================================================== */
+.dark {
+  color-scheme: dark;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #f8fafc !important;
+}
+
+.dark .text-\[\#102543\],
+.dark [class*="text-[#102543]"],
+.dark .text-\[\#0f1e36\],
+.dark [class*="text-[#0f1e36]"],
+.dark .text-\[\#1e3452\],
+.dark [class*="text-[#1e3452]"] {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-900,
+.dark [class*="text-slate-900"] {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-800,
+.dark [class*="text-slate-800"] {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-slate-700,
+.dark [class*="text-slate-700"] {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-slate-600,
+.dark [class*="text-slate-600"] {
+  color: #94a3b8 !important;
+}
+
+.dark .text-slate-500,
+.dark [class*="text-slate-500"] {
+  color: #94a3b8 !important;
+}
+
+.dark .text-indigo-950,
+.dark [class*="text-indigo-950"],
+.dark .text-indigo-900,
+.dark [class*="text-indigo-900"] {
+  color: #c7d2fe !important;
+}
+
+.dark .text-rose-700 {
+  color: #fb7185 !important;
+}
+
+.dark .text-sky-700 {
+  color: #38bdf8 !important;
+}
+
+.dark .text-cyan-700 {
+  color: #22d3ee !important;
+}
+
+.dark .text-emerald-700 {
+  color: #34d399 !important;
+}
+
+/* Charts and SVG tick text in dark mode */
+.dark .recharts-cartesian-axis-tick text {
+  fill: #94a3b8 !important;
+}
+
+.dark .recharts-legend-item-text {
+  color: #cbd5e1 !important;
+}
+
+.dark .recharts-default-tooltip {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f8fafc !important;
+}
+
+/* Dark mode inputs, selects, and text fields */
+.dark input[type="text"],
+.dark input[type="number"],
+.dark select {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.dark input::placeholder {
+  color: #64748b !important;
+}
+
+/* Dark mode badges and soft pill containers */
+.dark .bg-slate-100,
+.dark [class*="bg-slate-100"] {
+  background-color: rgba(30, 41, 59, 0.85) !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .border-slate-200,
+.dark [class*="border-slate-200"],
+.dark .border-slate-100 {
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Outfit', 'Inter', sans-serif;
 }
 
-/* Custom Mesh Gradient for Sidebar - Matches CrimeRakshak reference */
+/* Custom Mesh Gradient for Sidebar - Light */
 .sidebar-mesh {
   background-color: #dbe8fa;
   background-image: 
     radial-gradient(at 0% 0%, #bfdbfe 0px, transparent 65%),
     radial-gradient(at 100% 0%, #c7d2fe 0px, transparent 70%),
     radial-gradient(at 0% 100%, #bfdbfe 0px, transparent 60%);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Custom Atmospheric Mesh Gradient for Main Dashboard */
+/* Custom Mesh Gradient for Sidebar - Dark */
+.dark .sidebar-mesh {
+  background-color: #0b1120;
+  background-image: 
+    radial-gradient(at 0% 0%, #1e1b4b 0px, transparent 65%),
+    radial-gradient(at 100% 0%, #0f172a 0px, transparent 70%),
+    radial-gradient(at 0% 100%, #172554 0px, transparent 60%);
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Custom Atmospheric Mesh Gradient for Main Dashboard - Light */
 .main-mesh {
   background-color: #f4f8fe;
   background-image: 
@@ -71,6 +240,17 @@ h1, h2, h3, h4, h5, h6 {
     radial-gradient(at 85% 0%, rgba(254, 249, 231, 0.45) 0px, transparent 75%),
     radial-gradient(at 85% 100%, rgba(224, 242, 254, 0.50) 0px, transparent 75%),
     radial-gradient(at 15% 100%, rgba(237, 252, 246, 0.55) 0px, transparent 75%);
+  transition: background-color 0.3s ease;
+}
+
+/* Custom Atmospheric Mesh Gradient for Main Dashboard - Dark */
+.dark .main-mesh {
+  background-color: #060913;
+  background-image: 
+    radial-gradient(at 20% 0%, rgba(30, 27, 75, 0.45) 0px, transparent 75%),
+    radial-gradient(at 85% 0%, rgba(15, 23, 42, 0.55) 0px, transparent 75%),
+    radial-gradient(at 85% 100%, rgba(14, 116, 144, 0.18) 0px, transparent 75%),
+    radial-gradient(at 15% 100%, rgba(67, 56, 202, 0.22) 0px, transparent 75%);
 }
 
 /* Glass Card styling */
@@ -89,6 +269,95 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-2px);
 }
 
+/* ==========================================================================
+   Liquid Glass Styling
+   - Light theme: Crystal Clear Ultra-Transparent Liquid Glass with High Specular Highlights
+   - Dark theme: Sleek Deep Midnight Liquid Glass with Neon Rim Glow
+   ========================================================================== */
+.liquid-glass-panel {
+  background: rgba(255, 255, 255, 0.42) !important;
+  backdrop-filter: blur(28px) saturate(210%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(210%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  border-top: 2px solid rgba(255, 255, 255, 0.98) !important;
+  border-left: 2px solid rgba(255, 255, 255, 0.92) !important;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.65) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.50) !important;
+  box-shadow: 
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95), 
+    inset 0 2px 10px 0 rgba(255, 255, 255, 0.60), 
+    inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.04), 
+    inset 0 -2px 8px 0 rgba(0, 0, 0, 0.03), 
+    0 28px 70px rgba(15, 23, 42, 0.14), 
+    0 8px 24px rgba(59, 130, 246, 0.08) !important;
+  border-radius: 26px;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark .liquid-glass-panel {
+  background: rgba(14, 18, 34, 0.55) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.70) !important;
+  border-left: 1.5px solid rgba(255, 255, 255, 0.50) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.70), 
+    inset 0 2px 8px 0 rgba(255, 255, 255, 0.18), 
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.60), 
+    inset 0 -2px 8px 0 rgba(0, 0, 0, 0.35), 
+    0 24px 60px rgba(0, 0, 0, 0.65), 
+    0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+.liquid-glass-card {
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.90), 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-card:hover {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 1), 0 6px 20px rgba(99, 102, 241, 0.12) !important;
+  transform: translateY(-1px);
+}
+
+.dark .liquid-glass-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+}
+
+.dark .liquid-glass-card:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+}
+
+.liquid-glass-input {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.90) !important;
+  box-shadow: inset 0 1.5px 3px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+  transition: all 0.2s ease;
+}
+
+.dark .liquid-glass-input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.28) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25) !important;
+}
+
 /* Eyebrow badge */
 .spectra-badge {
   display: inline-flex;
@@ -103,6 +372,13 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(79, 70, 229, 0.09);
   color: #4338ca;
   border: 1px solid rgba(79, 70, 229, 0.15);
+  transition: all 0.2s ease;
+}
+
+.dark .spectra-badge {
+  background: rgba(99, 102, 241, 0.16);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.32);
 }
 
 /* Scrollbar utilities */
@@ -152,26 +428,48 @@ h1, h2, h3, h4, h5, h6 {
     margin: 12mm 14mm 14mm 14mm;
   }
 
-  body {
+  /* Reset root document geometry & background for clean paper printing */
+  html, body, #root, #root > div {
     background: #ffffff !important;
     color: #0f172a !important;
     overflow: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    position: static !important;
   }
 
-  /* Unravel fixed modal backdrop so it flows across multiple pages */
+  /* Hide entire app navigation shell, sidebar, dashboard, portals, and floating widgets */
+  aside,
+  .main-mesh,
+  main,
+  header,
+  .liquid-glass-panel,
+  #spectra-chat-portal,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Unravel modal overlays so they become a standard multi-page printed document */
   .spectra-print-modal-overlay {
     position: static !important;
+    display: block !important;
     background: transparent !important;
     padding: 0 !important;
     margin: 0 !important;
     overflow: visible !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    inset: auto !important;
+    z-index: auto !important;
   }
 
   .spectra-print-modal-card {
     position: static !important;
+    display: block !important;
     max-height: none !important;
     max-width: 100% !important;
     width: 100% !important;
@@ -182,14 +480,89 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0 !important;
     overflow: visible !important;
     background: #ffffff !important;
+    color: #0f172a !important;
   }
 
   .spectra-print-content {
+    display: block !important;
     overflow: visible !important;
     max-height: none !important;
     height: auto !important;
     padding: 0 !important;
     margin: 0 !important;
+    color: #0f172a !important;
+  }
+
+  /* OVERRIDE DARK MODE TEXT ON PAPER: Force dark, crisp typography on white paper */
+  .dark,
+  .dark body,
+  .dark #root,
+  .dark .spectra-print-modal-card,
+  .dark .spectra-print-content {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .dark .spectra-print-content h1,
+  .dark .spectra-print-content h2,
+  .dark .spectra-print-content h3,
+  .dark .spectra-print-content h4,
+  .dark .spectra-print-content h5,
+  .dark .spectra-print-content h6,
+  .dark .spectra-print-content .text-\[\#102543\],
+  .dark .spectra-print-content [class*="text-[#102543]"],
+  .dark .spectra-print-content .text-slate-900,
+  .dark .spectra-print-content .text-slate-800,
+  .dark .spectra-print-content .text-slate-700 {
+    color: #0f172a !important;
+  }
+
+  .dark .spectra-print-content .text-slate-600,
+  .dark .spectra-print-content .text-slate-500,
+  .dark .spectra-print-content .text-slate-400 {
+    color: #475569 !important;
+  }
+
+  .dark .spectra-print-content .bg-slate-50,
+  .dark .spectra-print-content .bg-slate-100,
+  .dark .spectra-print-content [class*="bg-slate-800"],
+  .dark .spectra-print-content [class*="bg-slate-900"],
+  .dark .spectra-print-content [class*="bg-slate-950"],
+  .dark .spectra-print-content [class*="bg-indigo-50"] {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  .dark .spectra-print-content p,
+  .dark .spectra-print-content span,
+  .dark .spectra-print-content td,
+  .dark .spectra-print-content th,
+  .dark .spectra-print-content li {
+    color: #0f172a !important;
+  }
+
+  .dark .spectra-print-content .text-indigo-700,
+  .dark .spectra-print-content .text-indigo-600,
+  .dark .spectra-print-content .text-indigo-400,
+  .dark .spectra-print-content .text-indigo-300 {
+    color: #4338ca !important;
+  }
+
+  .dark .spectra-print-content .text-emerald-700,
+  .dark .spectra-print-content .text-emerald-600,
+  .dark .spectra-print-content .text-emerald-400 {
+    color: #047857 !important;
+  }
+
+  .dark .spectra-print-content .text-rose-700,
+  .dark .spectra-print-content .text-rose-600,
+  .dark .spectra-print-content .text-rose-400 {
+    color: #be123c !important;
+  }
+
+  .dark .spectra-print-content .text-amber-500,
+  .dark .spectra-print-content .text-amber-400 {
+    color: #b45309 !important;
   }
 
   /* Structural page break management */
@@ -208,4 +581,18 @@ h1, h2, h3, h4, h5, h6 {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+}
+
+/* Leaflet Draw Vector Overlays: Ensure drag rectangles and preview shapes are always on top and visible */
+.leaflet-overlay-pane {
+  z-index: 400 !important;
+}
+
+.leaflet-overlay-pane svg {
+  z-index: 400 !important;
+  pointer-events: auto !important;
+}
+
+.leaflet-overlay-pane svg path {
+  pointer-events: auto !important;
 }

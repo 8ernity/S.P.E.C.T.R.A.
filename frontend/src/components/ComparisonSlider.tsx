@@ -5,10 +5,8 @@ import {
   Columns,
   Maximize2,
   Calendar,
-  Eye,
   RefreshCw,
-  Sparkles,
-  UploadCloud,
+  Eye,
 } from 'lucide-react';
 
 interface ComparisonSliderProps {
@@ -48,10 +46,10 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
 }) => {
   const [sliderPos, setSliderPos] = useState<number>(50);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<'split' | 'split_heatmap' | 'heatmap' | 'overlay' | 'side_by_side'>('split');
-  const [overlayOpacity, setOverlayOpacity] = useState<number>(85);
+  const [viewMode, setViewMode] = useState<'split' | 'side_by_side'>('split');
   const [aspectRatio, setAspectRatio] = useState<number>(1);
-  const [fitMode, setFitMode] = useState<'fit' | 'fill'>('fit');
+  const [overlayOpacity, setOverlayOpacity] = useState<number>(65);
+  const fitMode: 'fit' | 'fill' = 'fit';
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -107,112 +105,38 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
       {/* Viewer Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
-          <h2 className="text-lg lg:text-xl font-bold text-[#102543] font-['Outfit'] flex items-center gap-2">
-            <span>Before / After Earth Observation</span>
-            {satellite && (
-              <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
-                {satellite}
-              </span>
-            )}
+          <h2 className="text-lg lg:text-xl font-bold text-[#102543] dark:text-white font-['Outfit'] transition-colors">
+            Before / After Earth Observation
           </h2>
-          <p className="text-xs text-slate-500 font-medium">
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
             Drag the divider or switch layers to inspect surface change dynamics
           </p>
         </div>
 
-        {/* View Mode Pills, Fit Mode & Upload Action */}
+        {/* View Mode Pills */}
         <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-          {/* Fit vs Fill Toggle */}
-          <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-full border border-slate-200/60">
-            <button
-              onClick={() => setFitMode('fit')}
-              className={`px-2.5 py-1 text-[11px] font-bold rounded-full transition-all ${
-                fitMode === 'fit'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-indigo-600'
-              }`}
-              title="Display entire image with zero cropping"
-            >
-              Fit Full Image
-            </button>
-            <button
-              onClick={() => setFitMode('fill')}
-              className={`px-2.5 py-1 text-[11px] font-bold rounded-full transition-all ${
-                fitMode === 'fill'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-indigo-600'
-              }`}
-              title="Expand to fill widescreen container"
-            >
-              Fill Frame
-            </button>
-          </div>
-
-          <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-full border border-slate-200/60">
+          <div className="flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-full border border-slate-200/60 dark:border-white/10">
             <button
               onClick={() => setViewMode('split')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${
+              className={`px-3 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
                 viewMode === 'split'
                   ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-indigo-600'
+                  : 'text-slate-600 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-white'
               }`}
             >
               Split Baseline/Scene
             </button>
             <button
-              onClick={() => setViewMode('split_heatmap')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${
-                viewMode === 'split_heatmap'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-indigo-600'
-              }`}
-              title="Interactive slider comparing Scene against the Intensity Heatmap"
-            >
-              Slider vs Heatmap
-            </button>
-            <button
-              onClick={() => setViewMode('heatmap')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${
-                viewMode === 'heatmap'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-indigo-600'
-              }`}
-              title="Display scientific continuous change intensity / delta heatmap with colorbar"
-            >
-              Delta Heatmap
-            </button>
-            <button
-              onClick={() => setViewMode('overlay')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${
-                viewMode === 'overlay'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-indigo-600'
-              }`}
-            >
-              Mask Overlay
-            </button>
-            <button
               onClick={() => setViewMode('side_by_side')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all ${
+              className={`px-3 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
                 viewMode === 'side_by_side'
                   ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-indigo-600'
+                  : 'text-slate-600 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-white'
               }`}
             >
               Side-by-Side
             </button>
           </div>
-
-          {onOpenUpload && (
-            <button
-              onClick={onOpenUpload}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200/80 rounded-full text-xs font-bold shadow-sm transition-all"
-              title="Upload your own before/after optical or satellite pair"
-            >
-              <UploadCloud className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Upload Custom Pair</span>
-            </button>
-          )}
         </div>
       </div>
 
@@ -247,13 +171,13 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
               }`}
             />
 
-            {/* Optional Overlay on After Scene */}
-            {overlayUrl && (
+            {/* Change Mask Overlay on Comparison Scene */}
+            {overlayUrl && overlayOpacity > 0 && (
               <img
                 src={overlayUrl}
                 alt="Change Mask Overlay"
                 style={{ opacity: overlayOpacity / 100 }}
-                className={`absolute inset-0 w-full h-full pointer-events-none mix-blend-screen ${
+                className={`absolute inset-0 w-full h-full pointer-events-none mix-blend-screen transition-opacity duration-150 ${
                   fitMode === 'fit' ? 'object-fill' : 'object-cover'
                 }`}
               />
@@ -290,97 +214,6 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
           </>
         )}
 
-        {viewMode === 'split_heatmap' && (
-          <>
-            {/* Heatmap on the right side */}
-            <img
-              src={differenceHeatmapUrl || overlayUrl || afterUrl}
-              alt="Continuous Change Intensity Heatmap"
-              onLoad={handleImageLoad}
-              className={`absolute inset-0 w-full h-full pointer-events-none ${
-                fitMode === 'fit' ? 'object-contain' : 'object-cover'
-              }`}
-            />
-
-            {/* Comparison Optical Scene clipped from left */}
-            <div
-              className="absolute inset-0 overflow-hidden pointer-events-none"
-              style={{ width: `${sliderPos}%` }}
-            >
-              <img
-                src={afterUrl}
-                alt="Observation Scene"
-                style={{
-                  width: containerWidth || containerRef.current?.clientWidth || '100%',
-                  maxWidth: 'none',
-                  height: '100%',
-                }}
-                className={`absolute top-0 left-0 h-full pointer-events-none ${
-                  fitMode === 'fit' ? 'object-contain' : 'object-cover'
-                }`}
-              />
-            </div>
-
-            {/* Draggable Divider Handle */}
-            <div
-              className="slider-handle"
-              style={{ left: `${sliderPos}%` }}
-            >
-              <div className="slider-handle-button">
-                <Columns className="w-4 h-4" />
-              </div>
-            </div>
-
-            <div className="absolute top-3 left-3 bg-black/75 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-lg pointer-events-none">
-              OPTICAL SCENE
-            </div>
-            <div className="absolute top-3 right-3 bg-red-950/80 border border-red-500/40 text-red-200 text-[11px] font-bold px-2.5 py-1 rounded-lg pointer-events-none">
-              CHANGE INTENSITY HEATMAP
-            </div>
-          </>
-        )}
-
-        {viewMode === 'heatmap' && (
-          <div className="relative w-full h-full flex items-center justify-center bg-slate-950 p-2">
-            {differenceHeatmapUrl ? (
-              <img
-                src={differenceHeatmapUrl}
-                alt="Continuous Raster Delta / Intensity Heatmap"
-                onLoad={handleImageLoad}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-              />
-            ) : (
-              <div className="text-slate-400 text-xs">Computing raster delta heatmap...</div>
-            )}
-            <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-lg border border-slate-700/60 pointer-events-none">
-              STANDALONE SCIENTIFIC CHANGE HEATMAP
-            </div>
-          </div>
-        )}
-
-        {viewMode === 'overlay' && (
-          <div className="relative w-full h-full">
-            <img
-              src={afterUrl}
-              alt="Comparison Scene"
-              onLoad={handleImageLoad}
-              className={`absolute inset-0 w-full h-full ${
-                fitMode === 'fit' ? 'object-fill' : 'object-cover'
-              }`}
-            />
-            {overlayUrl && (
-              <img
-                src={overlayUrl}
-                alt="Change Overlay"
-                style={{ opacity: overlayOpacity / 100 }}
-                className={`absolute inset-0 w-full h-full transition-opacity duration-150 ${
-                  fitMode === 'fit' ? 'object-fill' : 'object-cover'
-                }`}
-              />
-            )}
-          </div>
-        )}
-
         {viewMode === 'side_by_side' && (
           <div className="grid grid-cols-2 w-full h-full gap-1 p-1 bg-black">
             <div className="relative w-full h-full overflow-hidden rounded-xl">
@@ -400,58 +233,20 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
                 onLoad={handleImageLoad}
                 className="w-full h-full object-contain"
               />
-              {overlayUrl && (
+              {overlayUrl && overlayOpacity > 0 && (
                 <img
                   src={overlayUrl}
-                  alt="Overlay"
+                  alt="Change Mask Overlay"
                   style={{ opacity: overlayOpacity / 100 }}
-                  className="absolute inset-0 w-full h-full object-contain"
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen transition-opacity duration-150"
                 />
               )}
               <span className="absolute top-2 left-2 bg-indigo-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                COMPARISON + OVERLAY
+                COMPARISON
               </span>
             </div>
           </div>
         )}
-
-        {/* Floating Scientific Intensity / Delta Scale Colorbar Legend */}
-        <div className="absolute top-3 right-3 z-20 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-xl p-2.5 shadow-2xl flex flex-col items-center select-none pointer-events-none transition-all">
-          <span className="text-[10px] font-bold tracking-wider text-slate-300 uppercase mb-1.5">
-            {['ndvi', 'ndwi', 'nbr'].includes(method.toLowerCase()) ? 'Delta Scale' : 'Intensity'}
-          </span>
-
-          <div className="flex items-center gap-2">
-            {/* Gradient Bar */}
-            <div
-              className="w-4 h-36 rounded-md border border-white/20 shadow-inner"
-              style={{
-                background: ['ndvi', 'ndwi', 'nbr'].includes(method.toLowerCase())
-                  ? 'linear-gradient(to bottom, #06b6d4 0%, #38bdf8 25%, #f8fafc 50%, #fb923c 75%, #ef4444 100%)'
-                  : 'linear-gradient(to bottom, #ffffff 0%, #facc15 30%, #ef4444 65%, #450a0a 90%, #000000 100%)'
-              }}
-            />
-
-            {/* Scale Ticks and Labels */}
-            {['ndvi', 'ndwi', 'nbr'].includes(method.toLowerCase()) ? (
-              <div className="flex flex-col justify-between h-36 text-[9px] font-mono font-bold text-slate-300">
-                <span className="text-cyan-400">+0.6 Gain</span>
-                <span className="text-cyan-300">+0.3</span>
-                <span className="text-slate-400"> 0.0</span>
-                <span className="text-orange-400">-0.3</span>
-                <span className="text-red-400">-0.6 Loss</span>
-              </div>
-            ) : (
-              <div className="flex flex-col justify-between h-36 text-[9px] font-mono font-bold text-slate-300">
-                <span className="text-amber-200">1.0 Max</span>
-                <span className="text-amber-400">0.75</span>
-                <span className="text-orange-400">0.50</span>
-                <span className="text-red-500">0.25</span>
-                <span className="text-slate-400">0.00 Nil</span>
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Date Labels Overlaid on Corners */}
         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm pointer-events-none">
@@ -489,7 +284,7 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
 
           {onThresholdChange && (
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-500 uppercase">Threshold:</span>
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Threshold:</span>
               <input
                 type="range"
                 min="0.05"
@@ -497,9 +292,9 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
                 step="0.01"
                 value={threshold}
                 onChange={(e) => onThresholdChange(parseFloat(e.target.value))}
-                className="w-24 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                className="w-24 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
               />
-              <span className="text-xs font-bold text-[#102543] font-mono w-9">
+              <span className="text-xs font-bold text-[#102543] dark:text-white font-mono w-9">
                 {threshold.toFixed(2)}
               </span>
             </div>
@@ -509,7 +304,7 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
             <button
               onClick={onRecompute}
               disabled={loading}
-              className="p-1.5 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors"
+              className="p-1.5 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
               title="Re-run analysis with parameters"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -519,17 +314,18 @@ export const ComparisonSlider: React.FC<ComparisonSliderProps> = ({
 
         {/* Overlay Opacity Slider */}
         <div className="flex items-center gap-2">
-          <Eye className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-xs font-bold text-slate-500 uppercase">Overlay Opacity:</span>
+          <Eye className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Opacity:</span>
           <input
             type="range"
-            min="10"
+            min="0"
             max="100"
+            step="5"
             value={overlayOpacity}
             onChange={(e) => setOverlayOpacity(parseInt(e.target.value))}
-            className="w-24 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+            className="w-24 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
           />
-          <span className="text-xs font-semibold text-slate-600 w-8">
+          <span className="text-xs font-bold text-[#102543] dark:text-white font-mono w-9">
             {overlayOpacity}%
           </span>
         </div>

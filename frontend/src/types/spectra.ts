@@ -140,3 +140,57 @@ export interface ReportData {
   methodologyNotes: string[];
   citations: string[];
 }
+
+export interface RegulatoryNotice {
+  analysisId: string;
+  generatedAt: string;
+  jurisdiction: string;
+  noticeTitle: string;
+  caseTrackingNumber: string;
+  statutoryBasis: string[];
+  geospatialEvidenceSummary: string;
+  directives: string[];
+  complianceDeadlineDays: number;
+  signOffEntity: string;
+  provider: string;
+}
+
+export interface ParcelDiagnostic {
+  analysisId: string;
+  parcelId: number;
+  generatedAt: string;
+  morphologyType: string;
+  severity: 'Critical' | 'High' | 'Moderate' | 'Low';
+  interpretation: string;
+  environmentalRisk: string;
+  recommendedFieldCheck: string;
+  provider: string;
+}
+
+export interface TimeTravelNarrative {
+  analysisId: string;
+  generatedAt: string;
+  periodSpan: string;
+  headline: string;
+  chronologicalStory: string;
+  driversOfChange: string[];
+  longTermOutlook: string;
+  provider: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  sources?: string[];
+  category?: string;
+  timestamp: string;
+}
+
+export interface ChatResponse {
+  response: string;
+  sources?: string[];
+  category?: string;
+  timestamp: string;
+  provider: string;
+}

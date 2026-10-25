@@ -39,6 +39,7 @@ app.include_router(analysis.router, prefix=api_prefix)
 app.include_router(insights.router, prefix=api_prefix)
 app.include_router(reports.router, prefix=api_prefix)
 app.include_router(stac.router, prefix=api_prefix)
+app.include_router(insights.chat_router, prefix=api_prefix)
 
 @app.get("/")
 def root():
