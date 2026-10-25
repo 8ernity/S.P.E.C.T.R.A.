@@ -1,0 +1,46 @@
+{
+  "id": "vegetation-demo",
+  "title": "Amazon Basin Canopy & Agricultural Clear-cut",
+  "description": "Multispectral Sentinel-2 corridor monitoring vegetation loss and canopy degradation across 26.2 km\u00b2 in Rond\u00f4nia.",
+  "type": "scientific",
+  "category": "Deforestation & Land Clearing",
+  "acquiredBefore": "2023-07-15T14:22:10Z",
+  "acquiredAfter": "2025-07-20T14:22:15Z",
+  "satellite": "Sentinel-2B MSI L2A",
+  "sensor": "MSI Multi-Spectral Instrument",
+  "crs": "EPSG:32720",
+  "resolutionMeters": 10.0,
+  "pixelSize": [
+    512,
+    512
+  ],
+  "geoTransform": [
+    -63.5,
+    9e-05,
+    0.0,
+    -10.2,
+    0.0,
+    -9e-05
+  ],
+  "availableBands": [
+    "B02",
+    "B03",
+    "B04",
+    "B08",
+    "B11",
+    "B12"
+  ],
+  "supportedMethods": [
+    "ndvi",
+    "nbr",
+    "cvd",
+    "threshold",
+    "otsu"
+  ],
+  "recommendedMethod": "ndvi",
+  "recommendedThreshold": 0.15,
+  "isMultispectral": true,
+  "isGeoreferenced": true,
+  "cloudCoverFraction": 0.02,
+  "credit": "ESA Copernicus Sentinel Data / Processed by SPECTRA Engine"
+}

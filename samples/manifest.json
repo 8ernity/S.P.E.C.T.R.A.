@@ -1,0 +1,62 @@
+{
+  "system": "SPECTRA - Satellite Precision Earth Change Tracking & Rapid Analytics",
+  "version": "1.0.0",
+  "updatedAt": "2026-10-25T12:00:00Z",
+  "cases": [
+    {
+      "id": "vegetation-demo",
+      "title": "Amazon Basin Canopy & Agricultural Clear-cut",
+      "category": "Deforestation & Land Clearing",
+      "type": "scientific",
+      "folder": "vegetation-demo",
+      "beforeThumb": "/samples/vegetation-demo/before.png",
+      "afterThumb": "/samples/vegetation-demo/after.png",
+      "satellite": "Sentinel-2B MSI L2A",
+      "supportedMethods": [
+        "ndvi",
+        "nbr",
+        "cvd",
+        "threshold",
+        "otsu"
+      ],
+      "recommendedMethod": "ndvi",
+      "isOfflineReady": true
+    },
+    {
+      "id": "coastal-demo",
+      "title": "Sundarbans Estuary Water Inundation & Coastal Erosion",
+      "category": "Coastal & Water Extent",
+      "type": "scientific",
+      "folder": "coastal-demo",
+      "beforeThumb": "/samples/coastal-demo/before.png",
+      "afterThumb": "/samples/coastal-demo/after.png",
+      "satellite": "Sentinel-2A MSI L2A",
+      "supportedMethods": [
+        "ndwi",
+        "ndvi",
+        "cvd",
+        "threshold",
+        "otsu"
+      ],
+      "recommendedMethod": "ndwi",
+      "isOfflineReady": true
+    },
+    {
+      "id": "urban-excavation-demo",
+      "title": "East Kolkata Peri-Urban Expansion & Excavation",
+      "category": "Infrastructure & Excavation",
+      "type": "visual",
+      "folder": "urban-excavation-demo",
+      "beforeThumb": "/samples/urban-excavation-demo/before.png",
+      "afterThumb": "/samples/urban-excavation-demo/after.png",
+      "satellite": "SPOT-7 Optical HR",
+      "supportedMethods": [
+        "threshold",
+        "otsu",
+        "cvd"
+      ],
+      "recommendedMethod": "otsu",
+      "isOfflineReady": true
+    }
+  ]
+}

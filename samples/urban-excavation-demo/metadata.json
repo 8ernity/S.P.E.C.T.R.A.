@@ -1,0 +1,41 @@
+{
+  "id": "urban-excavation-demo",
+  "title": "East Kolkata Peri-Urban Expansion & Excavation",
+  "description": "High-resolution optical observation capturing industrial parcel leveling, arterial corridor expansion, and excavation earthworks.",
+  "type": "visual",
+  "category": "Infrastructure & Excavation",
+  "acquiredBefore": "2021-03-12T05:10:00Z",
+  "acquiredAfter": "2024-03-18T05:12:00Z",
+  "satellite": "SPOT-7 Optical HR",
+  "sensor": "High-Resolution Optical Imager",
+  "crs": "EPSG:32645",
+  "resolutionMeters": 1.5,
+  "pixelSize": [
+    512,
+    512
+  ],
+  "geoTransform": [
+    88.42,
+    1.5e-05,
+    0.0,
+    22.56,
+    0.0,
+    -1.5e-05
+  ],
+  "availableBands": [
+    "R",
+    "G",
+    "B"
+  ],
+  "supportedMethods": [
+    "threshold",
+    "otsu",
+    "cvd"
+  ],
+  "recommendedMethod": "otsu",
+  "recommendedThreshold": 0.22,
+  "isMultispectral": false,
+  "isGeoreferenced": true,
+  "cloudCoverFraction": 0.0,
+  "credit": "CNES / Astrium / Processed by SPECTRA Engine"
+}

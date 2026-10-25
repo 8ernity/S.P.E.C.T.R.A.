@@ -1,0 +1,44 @@
+{
+  "id": "coastal-demo",
+  "title": "Sundarbans Estuary Water Inundation & Coastal Erosion",
+  "description": "Hydro-topographic change tracking storm surge shoreline retreat and wetland water expansion using NDWI (McFeeters).",
+  "type": "scientific",
+  "category": "Coastal & Water Extent",
+  "acquiredBefore": "2022-09-10T04:45:00Z",
+  "acquiredAfter": "2025-09-15T04:45:00Z",
+  "satellite": "Sentinel-2A MSI L2A",
+  "sensor": "MSI Multi-Spectral Instrument",
+  "crs": "EPSG:32645",
+  "resolutionMeters": 10.0,
+  "pixelSize": [
+    512,
+    512
+  ],
+  "geoTransform": [
+    88.85,
+    9e-05,
+    0.0,
+    21.75,
+    0.0,
+    -9e-05
+  ],
+  "availableBands": [
+    "B02",
+    "B03",
+    "B04",
+    "B08"
+  ],
+  "supportedMethods": [
+    "ndwi",
+    "ndvi",
+    "cvd",
+    "threshold",
+    "otsu"
+  ],
+  "recommendedMethod": "ndwi",
+  "recommendedThreshold": 0.2,
+  "isMultispectral": true,
+  "isGeoreferenced": true,
+  "cloudCoverFraction": 0.01,
+  "credit": "ESA Copernicus Sentinel Data / Processed by SPECTRA Engine"
+}

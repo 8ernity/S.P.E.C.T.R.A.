@@ -1,0 +1,22 @@
+# SPECTRA - Satellite Precision Earth Change Tracking & Rapid Analytics
+# Core API
+fastapi>=0.110.0
+uvicorn>=0.30.0
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+python-multipart>=0.0.9
+
+# Scientific & Raster Processing
+numpy>=1.26.0
+pillow>=10.2.0
+opencv-python-headless>=4.9.0
+tifffile>=2024.2.12
+
+# HTTP & AI Integration
+requests>=2.31.0
+httpx>=0.27.0
+adaption>=0.1.0
+
+# Reporting & Testing
+reportlab>=4.2.0
+pytest>=8.0.0
