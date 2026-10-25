@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .core.config import settings
-from .api import health, samples, uploads, analysis, insights, reports
+from .api import health, samples, uploads, analysis, insights, reports, stac
 
 app = FastAPI(
     title="SPECTRA - Satellite Precision Earth Change Tracking & Rapid Analytics",
@@ -38,6 +38,7 @@ app.include_router(uploads.router, prefix=api_prefix)
 app.include_router(analysis.router, prefix=api_prefix)
 app.include_router(insights.router, prefix=api_prefix)
 app.include_router(reports.router, prefix=api_prefix)
+app.include_router(stac.router, prefix=api_prefix)
 
 @app.get("/")
 def root():

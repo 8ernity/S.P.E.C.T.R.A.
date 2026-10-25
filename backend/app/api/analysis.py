@@ -22,6 +22,14 @@ ANALYSIS_STORE: Dict[str, AnalysisResult] = {}
 
 @router.post("", response_model=AnalysisResult)
 def create_analysis(req: AnalysisRequest):
+    return analyze_pair_internal(req)
+
+def analyze_pair_internal(
+    req: AnalysisRequest,
+    custom_title: Optional[str] = None,
+    acquired_b: Optional[str] = None,
+    acquired_a: Optional[str] = None
+) -> AnalysisResult:
     analysis_id = f"ana_{uuid.uuid4().hex[:10]}"
     now_iso = datetime.now(timezone.utc).isoformat()
     warnings = []
@@ -71,15 +79,16 @@ def create_analysis(req: AnalysisRequest):
         bands_b_path = None
         bands_a_path = None
         
-        source_title = f"Uploaded Pair ({before_file} vs {after_file})"
-        satellite = "User Provided Optical Sensor"
-        sensor = "RGB Camera / Optical Sensor"
+        source_title = custom_title or f"Uploaded Pair ({before_file} vs {after_file})"
+        satellite = "Sentinel-2 L2A (STAC)" if req.source.pairId.startswith("stac_") else "User Provided Optical Sensor"
+        sensor = "MSI Optical Sensor" if req.source.pairId.startswith("stac_") else "RGB Camera / Optical Sensor"
         crs = None
         resolution_m = None
-        acquired_b = None
-        acquired_a = None
-        origin = "upload"
-        warnings.append("Uploaded optical pair lacks verified geographic coordinates. Absolute area measurements are disabled.")
+        acquired_b = acquired_b
+        acquired_a = acquired_a
+        origin = "stac" if req.source.pairId.startswith("stac_") else "upload"
+        if not req.source.pairId.startswith("stac_"):
+            warnings.append("Uploaded optical pair lacks verified geographic coordinates. Absolute area measurements are disabled.")
         before_url = f"/cache/{req.source.pairId}/{before_file}"
         after_url = f"/cache/{req.source.pairId}/{after_file}"
     else:

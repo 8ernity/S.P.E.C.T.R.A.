@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { Overview } from './pages/Overview';
 import { AnalysisView } from './pages/AnalysisView';
 import { ReportsView } from './pages/ReportsView';
+import { TimeTravelView } from './pages/TimeTravelView';
 import { UploadModal } from './components/UploadModal';
 import { ReportModal } from './components/ReportModal';
 import {
@@ -161,6 +162,11 @@ export function App() {
 
   const getPageTitleAndSubtitle = () => {
     switch (activeTab) {
+      case 'timetravel':
+        return {
+          title: 'Global Multi-Year Satellite Time-Travel',
+          subtitle: 'Search historical Earth Search STAC Sentinel-2 catalogs for any global coordinates years in the past',
+        };
       case 'analysis':
         return {
           title: 'Anomaly Regions & Spatial Clusters',
@@ -208,7 +214,7 @@ export function App() {
               isCustomUpload={!!customPairId}
             />
 
-            {/* Page Router - Streamlined to 3 Essential Views */}
+            {/* Page Router - Streamlined to Essential Views + Global Time-Travel */}
             {activeTab === 'overview' && (
               <Overview
                 analysis={analysis}
@@ -232,6 +238,19 @@ export function App() {
                   )
                 }
                 onOpenUpload={() => setUploadModalOpen(true)}
+              />
+            )}
+
+            {activeTab === 'timetravel' && (
+              <TimeTravelView
+                onAnalysisGenerated={(res) => {
+                  setAnalysis(res);
+                  setInsight(null);
+                  setReportData(null);
+                  setActiveTab('overview');
+                  showToast('Historical Earth observation loaded into studio!', 'success');
+                }}
+                showToast={showToast}
               />
             )}
 

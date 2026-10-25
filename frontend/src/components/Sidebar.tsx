@@ -40,6 +40,7 @@ interface NavGroup {
 
 const navItems: NavItem[] = [
   { id: 'overview', label: 'Change Intelligence', icon: LayoutDashboard },
+  { id: 'timetravel', label: 'Global Time-Travel', icon: Globe },
   { id: 'analysis', label: 'Anomaly Regions', icon: Layers },
   { id: 'reports', label: 'Automated Report', icon: FileText },
 ];

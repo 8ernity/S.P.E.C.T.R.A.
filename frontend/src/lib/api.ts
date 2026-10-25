@@ -6,7 +6,16 @@ import type {
   ReportData,
 } from '../types/spectra';
 
-const API_BASE = '/api/v1';
+const RAW_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const API_BASE = RAW_BASE ? `${RAW_BASE}/api/v1` : '/api/v1';
+
+export function resolveAssetUrl(url: string | null | undefined): string {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (!RAW_BASE) return url;
+  const cleaned = url.startsWith('/') ? url : `/${url}`;
+  return `${RAW_BASE}${cleaned}`;
+}
 
 export async function fetchHealth(): Promise<{
   status: string;
@@ -23,7 +32,15 @@ export async function fetchHealth(): Promise<{
 export async function fetchSamples(): Promise<SampleManifestResponse> {
   const res = await fetch(`${API_BASE}/samples`);
   if (!res.ok) throw new Error('Failed to load sample cases');
-  return res.json();
+  const data: SampleManifestResponse = await res.json();
+  if (data.cases && RAW_BASE) {
+    data.cases = data.cases.map(s => ({
+      ...s,
+      beforeThumb: resolveAssetUrl(s.beforeThumb),
+      afterThumb: resolveAssetUrl(s.afterThumb),
+    }));
+  }
+  return data;
 }
 
 export async function fetchSampleMetadata(sampleId: string): Promise<SampleMetadata> {
@@ -53,7 +70,16 @@ export async function runAnalysis(
     const message = errData?.detail?.error?.message || `Analysis failed (${res.status})`;
     throw new Error(message);
   }
-  return res.json();
+  const result: AnalysisResult = await res.json();
+  if (RAW_BASE && result.visuals) {
+    result.visuals.beforeUrl = resolveAssetUrl(result.visuals.beforeUrl);
+    result.visuals.afterUrl = resolveAssetUrl(result.visuals.afterUrl);
+    result.visuals.overlayUrl = resolveAssetUrl(result.visuals.overlayUrl);
+    if (result.visuals.differenceHeatmapUrl) {
+      result.visuals.differenceHeatmapUrl = resolveAssetUrl(result.visuals.differenceHeatmapUrl);
+    }
+  }
+  return result;
 }
 
 export async function fetchInsight(analysisId: string): Promise<IncidentInsight> {
@@ -100,3 +126,43 @@ export async function uploadPair(beforeFile: File, afterFile: File): Promise<{
   }
   return res.json();
 }
+
+export async function runTimeTravelAnalysis(params: {
+  bbox: [number, number, number, number];
+  baselineYear: number;
+  comparisonYear: number;
+  month: number;
+  maxCloudCover?: number;
+  method?: string;
+  threshold?: number;
+}): Promise<AnalysisResult> {
+  const res = await fetch(`${API_BASE}/stac/time-travel`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      bbox: params.bbox,
+      baselineYear: params.baselineYear,
+      comparisonYear: params.comparisonYear,
+      month: params.month,
+      maxCloudCover: params.maxCloudCover || 25,
+      method: params.method || 'ndvi',
+      threshold: params.threshold || 0.20,
+    }),
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    const message = errData?.detail?.error?.message || `Earth Search STAC search failed (${res.status})`;
+    throw new Error(message);
+  }
+  const result: AnalysisResult = await res.json();
+  if (RAW_BASE && result.visuals) {
+    result.visuals.beforeUrl = resolveAssetUrl(result.visuals.beforeUrl);
+    result.visuals.afterUrl = resolveAssetUrl(result.visuals.afterUrl);
+    result.visuals.overlayUrl = resolveAssetUrl(result.visuals.overlayUrl);
+    if (result.visuals.differenceHeatmapUrl) {
+      result.visuals.differenceHeatmapUrl = resolveAssetUrl(result.visuals.differenceHeatmapUrl);
+    }
+  }
+  return result;
+}
+
