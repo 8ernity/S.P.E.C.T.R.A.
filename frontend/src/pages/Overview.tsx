@@ -16,6 +16,7 @@ interface OverviewProps {
   threshold: number;
   onThresholdChange: (t: number) => void;
   onRecompute: () => void;
+  onOpenUpload?: () => void;
 }
 
 export const Overview: React.FC<OverviewProps> = ({
@@ -29,6 +30,7 @@ export const Overview: React.FC<OverviewProps> = ({
   threshold,
   onThresholdChange,
   onRecompute,
+  onOpenUpload,
 }) => {
   return (
     <div className="space-y-6">
@@ -48,6 +50,7 @@ export const Overview: React.FC<OverviewProps> = ({
               beforeUrl={analysis.visuals.beforeUrl}
               afterUrl={analysis.visuals.afterUrl}
               overlayUrl={analysis.visuals.overlayUrl}
+              differenceHeatmapUrl={analysis.visuals.differenceHeatmapUrl}
               beforeDate={analysis.provenance.acquiredBefore}
               afterDate={analysis.provenance.acquiredAfter}
               title={analysis.sourceTitle}
@@ -58,6 +61,7 @@ export const Overview: React.FC<OverviewProps> = ({
               onThresholdChange={onThresholdChange}
               onRecompute={onRecompute}
               loading={loadingAnalysis}
+              onOpenUpload={onOpenUpload}
             />
           ) : (
             <div className="spectra-card p-12 text-center text-slate-400">

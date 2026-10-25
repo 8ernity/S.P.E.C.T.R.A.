@@ -2,13 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Overview } from './pages/Overview';
-import { ComparisonView } from './pages/ComparisonView';
 import { AnalysisView } from './pages/AnalysisView';
-import { EnvironmentView } from './pages/EnvironmentView';
-import { ExplorerView } from './pages/ExplorerView';
-import { IntelligenceView } from './pages/IntelligenceView';
 import { ReportsView } from './pages/ReportsView';
-import { MethodologyView } from './pages/MethodologyView';
 import { UploadModal } from './components/UploadModal';
 import { ReportModal } from './components/ReportModal';
 import {
@@ -166,48 +161,22 @@ export function App() {
 
   const getPageTitleAndSubtitle = () => {
     switch (activeTab) {
-      case 'compare':
-        return {
-          title: 'Image Comparison Studio',
-          subtitle: 'Dual-scene optical slider with adjustable difference overlays and layer clipping',
-        };
       case 'analysis':
         return {
-          title: 'Change Segmentation Analytics',
-          subtitle: 'Statistical distribution, delta histogram, and connected parcel clustering',
-        };
-      case 'environment':
-      case 'water':
-        return {
-          title: 'Multi-Spectral Environmental Indices',
-          subtitle: 'Physical reflectance calculations (NDVI, NDWI, NBR) across Sentinel-2 bands',
-        };
-      case 'explorer':
-        return {
-          title: 'Satellite Orbit Explorer',
-          subtitle: 'Bounding box query, cloud cover thresholding, and historical pass catalog',
-        };
-      case 'intelligence':
-        return {
-          title: 'Adaption AI Incident Hub',
-          subtitle: 'Sponsor-grade LLM synthesis transforming raw raster metrics into actionable hypotheses',
+          title: 'Anomaly Regions & Spatial Clusters',
+          subtitle: 'Connected component clustering, bounding boxes, centroid coordinates, and delta distribution',
         };
       case 'reports':
         return {
-          title: 'Evidence Dossiers & Audit Export',
-          subtitle: 'Complete analytical records formatted for official environmental verification',
-        };
-      case 'methodology':
-        return {
-          title: 'Scientific Methodology & Formulas',
-          subtitle: 'Peer-reviewed remote sensing equations, CRS reprojection rules, and band maps',
+          title: 'Automated Incident Report Dossier',
+          subtitle: 'Audit-ready change intelligence summaries with provenance, nature classification, and export',
         };
       case 'overview':
       default:
         return {
-          title: 'Satellite Intelligence',
+          title: 'Change Intelligence Studio',
           subtitle:
-            'Autonomous earth observation change intelligence for environmental monitoring & land cover change',
+            "PS-05 AI-powered satellite anomaly detection distinguishing natural events from potential human-made damage",
         };
     }
   };
@@ -219,16 +188,11 @@ export function App() {
       {/* Sidebar - Matches CrimeRakshak reference */}
       <Sidebar
         currentPath={activeTab}
-        onNavigate={(tab) => {
-          setActiveTab(tab);
-          if (tab === 'water') {
-            setCurrentMethod('ndwi');
-            executeAnalysis(activeSampleId, customPairId || undefined, 'ndwi');
-          }
-        }}
+        onNavigate={(tab) => setActiveTab(tab)}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         onResetCase={() => handleSelectSample(activeSampleId)}
+        onOpenUpload={() => setUploadModalOpen(true)}
       />
 
       {/* Main Content Area with Mesh Gradient & Rounded Top Left */}
@@ -239,15 +203,12 @@ export function App() {
             <Header
               title={pageMeta.title}
               subtitle={pageMeta.subtitle}
-              sampleCases={sampleCases}
-              activeSampleId={activeSampleId}
-              onSelectSample={handleSelectSample}
               onOpenUpload={() => setUploadModalOpen(true)}
               adaptionOnline={adaptionOnline}
               isCustomUpload={!!customPairId}
             />
 
-            {/* Page Router */}
+            {/* Page Router - Streamlined to 3 Essential Views */}
             {activeTab === 'overview' && (
               <Overview
                 analysis={analysis}
@@ -270,59 +231,11 @@ export function App() {
                     currentThreshold
                   )
                 }
-              />
-            )}
-
-            {activeTab === 'compare' && (
-              <ComparisonView
-                analysis={analysis}
-                method={currentMethod}
-                onMethodChange={(m) => {
-                  setCurrentMethod(m);
-                  executeAnalysis(activeSampleId, customPairId || undefined, m);
-                }}
-                threshold={currentThreshold}
-                onThresholdChange={(t) => setCurrentThreshold(t)}
-                onRecompute={() =>
-                  executeAnalysis(
-                    activeSampleId,
-                    customPairId || undefined,
-                    currentMethod,
-                    currentThreshold
-                  )
-                }
-                loading={loadingAnalysis}
+                onOpenUpload={() => setUploadModalOpen(true)}
               />
             )}
 
             {activeTab === 'analysis' && <AnalysisView analysis={analysis} />}
-
-            {(activeTab === 'environment' || activeTab === 'water') && (
-              <EnvironmentView
-                analysis={analysis}
-                activeMethod={currentMethod}
-                onSelectMethod={(m) => {
-                  setCurrentMethod(m);
-                  executeAnalysis(activeSampleId, customPairId || undefined, m);
-                }}
-              />
-            )}
-
-            {activeTab === 'explorer' && (
-              <ExplorerView
-                sampleCases={sampleCases}
-                onSelectCase={handleSelectSample}
-              />
-            )}
-
-            {activeTab === 'intelligence' && (
-              <IntelligenceView
-                analysis={analysis}
-                insight={insight}
-                loading={loadingInsight}
-                onRequestInsight={handleRequestInsight}
-              />
-            )}
 
             {activeTab === 'reports' && (
               <ReportsView
@@ -330,8 +243,6 @@ export function App() {
                 onOpenReportModal={handleOpenReport}
               />
             )}
-
-            {activeTab === 'methodology' && <MethodologyView />}
           </main>
         </div>
       </div>

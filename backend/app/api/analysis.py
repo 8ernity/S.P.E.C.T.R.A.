@@ -162,7 +162,7 @@ def create_analysis(req: AnalysisRequest):
     smoothing_kernel = params.get("smoothingKernel", 3)
     
     # 6. Analyze regions and render RGBA overlay
-    measurements, regions, histogram, overlay_filename = analyze_regions_and_render_overlay(
+    measurements, regions, histogram, overlay_filename, heatmap_filename = analyze_regions_and_render_overlay(
         diff_or_delta=diff_or_delta,
         threshold=threshold_to_use,
         analysis_id=analysis_id,
@@ -176,6 +176,7 @@ def create_analysis(req: AnalysisRequest):
     )
     
     overlay_url = f"/api/v1/analyses/{analysis_id}/overlay.png"
+    heatmap_url = f"/api/v1/analyses/{analysis_id}/heatmap.png"
     
     provenance = Provenance(
         origin=origin,
@@ -193,7 +194,8 @@ def create_analysis(req: AnalysisRequest):
     visuals = Visuals(
         beforeUrl=before_url,
         afterUrl=after_url,
-        overlayUrl=overlay_url
+        overlayUrl=overlay_url,
+        differenceHeatmapUrl=heatmap_url
     )
     
     citations = [
@@ -232,6 +234,17 @@ def get_overlay_image(analysis_id: str):
         raise SpectraError("NOT_FOUND", f"Overlay image for analysis '{analysis_id}' not found.")
     return FileResponse(
         overlay_path,
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=3600"}
+    )
+
+@router.get("/{analysis_id}/heatmap.png")
+def get_heatmap_image(analysis_id: str):
+    heatmap_path = os.path.join(settings.TEMP_DATA_DIR, f"heatmap_{analysis_id}.png")
+    if not os.path.exists(heatmap_path):
+        raise SpectraError("NOT_FOUND", f"Heatmap image for analysis '{analysis_id}' not found.")
+    return FileResponse(
+        heatmap_path,
         media_type="image/png",
         headers={"Cache-Control": "public, max-age=3600"}
     )

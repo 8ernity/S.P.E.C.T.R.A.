@@ -2,21 +2,12 @@ import React from 'react';
 import {
   UploadCloud,
   Sparkles,
-  Layers,
-  ChevronDown,
-  Satellite,
-  CheckCircle2,
-  AlertTriangle,
 } from 'lucide-react';
-import type { SampleSummary } from '../types/spectra';
 
 interface HeaderProps {
   title: string;
   subtitle: string;
   eyebrow?: string;
-  sampleCases: SampleSummary[];
-  activeSampleId: string;
-  onSelectSample: (id: string) => void;
   onOpenUpload: () => void;
   adaptionOnline: boolean;
   isCustomUpload?: boolean;
@@ -26,12 +17,8 @@ export const Header: React.FC<HeaderProps> = ({
   title,
   subtitle,
   eyebrow = 'EARTH OBSERVATION & SATELLITE CHANGE INTELLIGENCE',
-  sampleCases,
-  activeSampleId,
-  onSelectSample,
   onOpenUpload,
   adaptionOnline,
-  isCustomUpload,
 }) => {
   return (
     <header className="mb-6">
@@ -51,29 +38,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Action Controls */}
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Sample Case Selector Pills */}
-          <div className="bg-white/70 backdrop-blur-md p-1 rounded-full border border-white/80 shadow-sm flex items-center gap-1">
-            {sampleCases.map((c) => {
-              const isSelected = activeSampleId === c.id && !isCustomUpload;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => onSelectSample(c.id)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
-                    isSelected
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'text-slate-600 hover:text-indigo-600 hover:bg-white/60'
-                  }`}
-                >
-                  {c.id === 'vegetation-demo'
-                    ? 'Amazon Forest'
-                    : c.id === 'coastal-demo'
-                    ? 'Sundarbans Estuary'
-                    : 'East Kolkata'}
-                </button>
-              );
-            })}
-          </div>
 
           {/* New Analysis / Upload Button */}
           <button

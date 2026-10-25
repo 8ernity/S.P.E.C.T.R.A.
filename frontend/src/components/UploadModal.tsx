@@ -25,13 +25,14 @@ export const UploadModal: React.FC<UploadModalProps> = ({
   const [afterFile, setAfterFile] = useState<File | null>(null);
   const [beforePreview, setBeforePreview] = useState<string | null>(null);
   const [afterPreview, setAfterPreview] = useState<string | null>(null);
+  const [activeTarget, setActiveTarget] = useState<'before' | 'after' | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isDraggingBefore, setIsDraggingBefore] = useState<boolean>(false);
+  const [isDraggingAfter, setIsDraggingAfter] = useState<boolean>(false);
 
   const beforeInputRef = useRef<HTMLInputElement>(null);
   const afterInputRef = useRef<HTMLInputElement>(null);
-
-  if (!isOpen) return null;
 
   const handleBeforeSelect = (file: File) => {
     setBeforeFile(file);
@@ -45,9 +46,43 @@ export const UploadModal: React.FC<UploadModalProps> = ({
     setErrorMsg(null);
   };
 
+  // Clipboard Paste (Ctrl+V) handler
+  React.useEffect(() => {
+    if (!isOpen) return;
+
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.startsWith('image/')) {
+          const file = items[i].getAsFile();
+          if (file) {
+            e.preventDefault();
+            // Determine target:
+            // 1. If user specifically focused 'after' or ('before' already has image and user didn't explicitly target 'before')
+            if (activeTarget === 'after' || (beforeFile && activeTarget !== 'before')) {
+              handleAfterSelect(file);
+              setActiveTarget(null);
+            } else {
+              handleBeforeSelect(file);
+              setActiveTarget('after'); // auto-prepare next paste for 'after'
+            }
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [isOpen, activeTarget, beforeFile]);
+
+  if (!isOpen) return null;
+
   const handleSubmit = async () => {
     if (!beforeFile || !afterFile) {
-      setErrorMsg('Please select both Baseline (Before) and Comparison (After) scenes.');
+      setErrorMsg('Please provide both Baseline (Before) and Comparison (After) scenes.');
       return;
     }
     setIsUploading(true);
@@ -81,7 +116,7 @@ export const UploadModal: React.FC<UploadModalProps> = ({
             Upload Image Pair for Change Analysis
           </h2>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Select high-resolution optical rasters (PNG, JPEG, GeoTIFF) for before/after comparison
+            Select optical rasters (PNG, JPG) • <span className="text-indigo-600 font-bold">Paste with Ctrl+V</span> or drag & drop directly
           </p>
         </div>
 
@@ -93,12 +128,32 @@ export const UploadModal: React.FC<UploadModalProps> = ({
           </div>
         )}
 
-        {/* Dual Upload Dropzones */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        {/* Dual Upload Dropzones with Paste & Drag-and-Drop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           {/* Target 1: Before Image */}
           <div
-            onClick={() => beforeInputRef.current?.click()}
-            className="border-2 border-dashed border-indigo-200 hover:border-indigo-400 bg-indigo-50/30 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all aspect-[4/3] relative overflow-hidden group"
+            tabIndex={0}
+            onFocus={() => setActiveTarget('before')}
+            onClick={() => {
+              setActiveTarget('before');
+              if (!beforePreview) beforeInputRef.current?.click();
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDraggingBefore(true);
+            }}
+            onDragLeave={() => setIsDraggingBefore(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsDraggingBefore(false);
+              const file = e.dataTransfer.files?.[0];
+              if (file && file.type.startsWith('image/')) handleBeforeSelect(file);
+            }}
+            className={`border-2 border-dashed rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all aspect-[4/3] relative overflow-hidden group outline-none ${
+              isDraggingBefore || activeTarget === 'before'
+                ? 'border-indigo-600 ring-2 ring-indigo-200 bg-indigo-50/70'
+                : 'border-indigo-200 hover:border-indigo-400 bg-indigo-50/30'
+            }`}
           >
             <input
               ref={beforeInputRef}
@@ -114,28 +169,72 @@ export const UploadModal: React.FC<UploadModalProps> = ({
                   alt="Before Preview"
                   className="absolute inset-0 w-full h-full object-cover rounded-xl"
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                  Change Image
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-xs font-bold gap-1">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      beforeInputRef.current?.click();
+                    }}
+                    className="px-2.5 py-1 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg"
+                  >
+                    Change Image
+                  </button>
+                  <span className="text-[10px] text-white/80">or press Ctrl+V</span>
                 </div>
                 <div className="absolute top-2 left-2 bg-black/70 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                  BASELINE
+                  BASELINE (BEFORE)
                 </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setBeforeFile(null);
+                    setBeforePreview(null);
+                    setActiveTarget('before');
+                  }}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white hover:bg-rose-600 flex items-center justify-center transition-colors"
+                  title="Remove image"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </>
             ) : (
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 pointer-events-none">
                 <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto">
                   <UploadCloud className="w-5 h-5" />
                 </div>
                 <div className="text-xs font-bold text-slate-700">Baseline (Before)</div>
-                <div className="text-[10px] text-slate-400">Click to browse file</div>
+                <div className="text-[10px] text-slate-500 font-medium">Click, drag & drop, or</div>
+                <kbd className="inline-block px-1.5 py-0.5 text-[10px] font-mono font-bold bg-white text-indigo-700 border border-indigo-200 rounded shadow-xs">
+                  Ctrl + V
+                </kbd>
               </div>
             )}
           </div>
 
           {/* Target 2: After Image */}
           <div
-            onClick={() => afterInputRef.current?.click()}
-            className="border-2 border-dashed border-cyan-200 hover:border-cyan-400 bg-cyan-50/30 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all aspect-[4/3] relative overflow-hidden group"
+            tabIndex={0}
+            onFocus={() => setActiveTarget('after')}
+            onClick={() => {
+              setActiveTarget('after');
+              if (!afterPreview) afterInputRef.current?.click();
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDraggingAfter(true);
+            }}
+            onDragLeave={() => setIsDraggingAfter(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsDraggingAfter(false);
+              const file = e.dataTransfer.files?.[0];
+              if (file && file.type.startsWith('image/')) handleAfterSelect(file);
+            }}
+            className={`border-2 border-dashed rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all aspect-[4/3] relative overflow-hidden group outline-none ${
+              isDraggingAfter || activeTarget === 'after'
+                ? 'border-cyan-600 ring-2 ring-cyan-200 bg-cyan-50/70'
+                : 'border-cyan-200 hover:border-cyan-400 bg-cyan-50/30'
+            }`}
           >
             <input
               ref={afterInputRef}
@@ -151,20 +250,44 @@ export const UploadModal: React.FC<UploadModalProps> = ({
                   alt="After Preview"
                   className="absolute inset-0 w-full h-full object-cover rounded-xl"
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                  Change Image
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-xs font-bold gap-1">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      afterInputRef.current?.click();
+                    }}
+                    className="px-2.5 py-1 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg"
+                  >
+                    Change Image
+                  </button>
+                  <span className="text-[10px] text-white/80">or press Ctrl+V</span>
                 </div>
                 <div className="absolute top-2 left-2 bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                  COMPARISON
+                  COMPARISON (AFTER)
                 </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setAfterFile(null);
+                    setAfterPreview(null);
+                    setActiveTarget('after');
+                  }}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white hover:bg-rose-600 flex items-center justify-center transition-colors"
+                  title="Remove image"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </>
             ) : (
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 pointer-events-none">
                 <div className="w-10 h-10 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center mx-auto">
                   <UploadCloud className="w-5 h-5" />
                 </div>
                 <div className="text-xs font-bold text-slate-700">Comparison (After)</div>
-                <div className="text-[10px] text-slate-400">Click to browse file</div>
+                <div className="text-[10px] text-slate-500 font-medium">Click, drag & drop, or</div>
+                <kbd className="inline-block px-1.5 py-0.5 text-[10px] font-mono font-bold bg-white text-cyan-700 border border-cyan-200 rounded shadow-xs">
+                  Ctrl + V
+                </kbd>
               </div>
             )}
           </div>

@@ -99,7 +99,7 @@ export const AdaptionInsightCard: React.FC<AdaptionInsightProps> = ({
           }`}
         >
           <div className="flex items-center gap-2 truncate">
-            <ShieldCheck className="w-4 h-4 shrink-0 text-indigo-600" />
+            <ShieldCheck className={`w-4 h-4 shrink-0 ${insight.providerStatus === 'success' ? 'text-emerald-600' : 'text-indigo-600'}`} />
             <span className="font-bold">
               {insight.provider === 'adaption'
                 ? `Provider: Adaption Labs (${insight.model || 'qwen3.5-397b'})`

@@ -32,3 +32,6 @@ Thumbs.db
 # Local Environment Secrets
 *.env
 !*.env.example
+
+# Scratch clones & temp research
+scratch/

@@ -140,6 +140,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ analysis }) => {
               <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
                 <th className="py-2.5 px-3">Cluster</th>
                 <th className="py-2.5 px-3">Category Suggestion</th>
+                <th className="py-2.5 px-3">Anomaly Nature</th>
                 <th className="py-2.5 px-3 text-right">Pixel Count</th>
                 <th className="py-2.5 px-3 text-right">Ground Area</th>
                 <th className="py-2.5 px-3 text-right">Mean Shift</th>
@@ -148,33 +149,50 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({ analysis }) => {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredRegions.length > 0 ? (
-                filteredRegions.map((r) => (
-                  <tr key={r.id} className="hover:bg-indigo-50/40 transition-colors">
-                    <td className="py-2.5 px-3 font-bold text-indigo-700">#{r.id}</td>
-                    <td className="py-2.5 px-3 font-semibold text-slate-800">
-                      {r.categorySuggestion || 'Unattributed Shift'}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono font-medium">
-                      {r.maskPixelCount.toLocaleString()} px
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
-                      {r.areaKm2 ? `${r.areaKm2.toFixed(4)} km²` : '—'}
-                    </td>
-                    <td
-                      className={`py-2.5 px-3 text-right font-mono font-bold ${
-                        (r.meanDelta || 0) < 0 ? 'text-rose-600' : 'text-emerald-600'
-                      }`}
-                    >
-                      {r.meanDelta ? (r.meanDelta >= 0 ? `+${r.meanDelta}` : r.meanDelta) : '0.00'}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-400">
-                      [{r.centroidPixels[0]}, {r.centroidPixels[1]}]
-                    </td>
-                  </tr>
-                ))
+                filteredRegions.map((r) => {
+                  const isHuman = r.nature?.includes('Human-Made');
+                  const isNatural = r.nature?.includes('Natural');
+                  return (
+                    <tr key={r.id} className="hover:bg-indigo-50/40 transition-colors">
+                      <td className="py-2.5 px-3 font-bold text-indigo-700">#{r.id}</td>
+                      <td className="py-2.5 px-3 font-semibold text-slate-800">
+                        {r.categorySuggestion || 'Unattributed Shift'}
+                      </td>
+                      <td className="py-2.5 px-3">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            isHuman
+                              ? 'bg-rose-100 text-rose-700'
+                              : isNatural
+                              ? 'bg-sky-100 text-sky-700'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {r.nature || 'Variance'}
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-medium">
+                        {r.maskPixelCount.toLocaleString()} px
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
+                        {r.areaKm2 ? `${r.areaKm2.toFixed(4)} km²` : '—'}
+                      </td>
+                      <td
+                        className={`py-2.5 px-3 text-right font-mono font-bold ${
+                          (r.meanDelta || 0) < 0 ? 'text-rose-600' : 'text-emerald-600'
+                        }`}
+                      >
+                        {r.meanDelta ? (r.meanDelta >= 0 ? `+${r.meanDelta}` : r.meanDelta) : '0.00'}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-400">
+                        [{r.centroidPixels[0]}, {r.centroidPixels[1]}]
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan={6} className="py-6 text-center text-slate-400">
+                  <td colSpan={7} className="py-6 text-center text-slate-400">
                     No regions matched the current filter.
                   </td>
                 </tr>

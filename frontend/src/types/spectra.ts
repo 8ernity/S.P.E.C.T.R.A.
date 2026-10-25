@@ -50,6 +50,7 @@ export interface ConnectedRegion {
   areaKm2?: number | null;
   meanDelta?: number | null;
   categorySuggestion?: string | null;
+  nature?: string | null;
 }
 
 export interface HistogramBin {
@@ -69,6 +70,11 @@ export interface Measurements {
   meanIndexBefore?: number | null;
   meanIndexAfter?: number | null;
   thresholdUsed: number;
+  detectedAnomaly?: string | null;
+  natureClassification?: string | null;
+  natureConfidence?: number | null;
+  numRegions?: number | null;
+  meanRegionSize?: number | null;
 }
 
 export interface Visuals {

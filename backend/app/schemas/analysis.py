@@ -25,6 +25,7 @@ class ConnectedRegion(BaseModel):
     areaKm2: Optional[float] = None
     meanDelta: Optional[float] = None
     categorySuggestion: Optional[str] = None
+    nature: Optional[str] = "Undetermined"  # "Natural Event" | "Potential Human-Made Damage"
 
 class Measurements(BaseModel):
     changedPixels: int
@@ -36,6 +37,11 @@ class Measurements(BaseModel):
     meanIndexBefore: Optional[float] = None
     meanIndexAfter: Optional[float] = None
     thresholdUsed: float
+    detectedAnomaly: str = "Unspecified Surface Variance"
+    natureClassification: str = "Undetermined"  # "Natural Event" | "Potential Human-Made Damage"
+    natureConfidence: float = 0.85
+    numRegions: int = 0
+    meanRegionSize: float = 0.0
 
 class Visuals(BaseModel):
     beforeUrl: str
